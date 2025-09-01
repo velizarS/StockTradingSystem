@@ -23,5 +23,31 @@ services:
       RABBITMQ_DEFAULT_USER: myuser
       RABBITMQ_DEFAULT_PASS: mypassword
 
+  orderservice:
+    build: ./Services/OrderService
+    container_name: orderservice
+    ports:
+      - "5001:80"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  portfolioservice:
+    build: ./Services/PortfolioService
+    container_name: portfolioservice
+    ports:
+      - "5002:80"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  priceservice:
+    build: ./Services/PriceService
+    container_name: priceservice
+    ports:
+      - "5003:80"
+    depends_on:
+      - rabbitmq
+
 volumes:
   postgres_data:
