@@ -9,11 +9,11 @@ using PortfolioService.Data;
 
 #nullable disable
 
-namespace PortfolioService.Data.Migrations
+namespace PortfolioService.Migrations
 {
     [DbContext(typeof(PortfolioDbContext))]
-    [Migration("20250902095902_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250902165058_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

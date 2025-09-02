@@ -8,7 +8,7 @@ using PortfolioService.Data;
 
 #nullable disable
 
-namespace PortfolioService.Data.Migrations
+namespace PortfolioService.Migrations
 {
     [DbContext(typeof(PortfolioDbContext))]
     partial class PortfolioDbContextModelSnapshot : ModelSnapshot
