@@ -1,26 +1,32 @@
 using Microsoft.EntityFrameworkCore;
 using OrderService.Data;
-using OrderService.Repositories;
 using OrderService.Services;
+using OrderService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-builder.Services.AddControllers();
-
-// Add DbContext with PostgreSQL
+// DbContext с PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register repositories & services
+// Репозиторий
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+// Сервиз
 builder.Services.AddScoped<IOrderService, OrderService.Services.OrderService>();
+
+// Swagger / OpenAPI
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Swagger само в Development
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
