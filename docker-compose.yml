@@ -16,12 +16,12 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq_broker
-    ports:
-      - "5672:5672"   # за връзка от .NET
-      - "15672:15672" # web UI за RabbitMQ
     environment:
       RABBITMQ_DEFAULT_USER: myuser
       RABBITMQ_DEFAULT_PASS: mypassword
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   orderservice:
     build: ./Services/OrderService
@@ -39,14 +39,6 @@ services:
       - "5002:80"
     depends_on:
       - postgres
-      - rabbitmq
-
-  priceservice:
-    build: ./Services/PriceService
-    container_name: priceservice
-    ports:
-      - "5003:80"
-    depends_on:
       - rabbitmq
 
 volumes:

@@ -4,7 +4,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-
 namespace OrderService.Messaging
 {
     public class RabbitMqPublisher : IEventPublisher, IDisposable
@@ -40,7 +39,7 @@ namespace OrderService.Messaging
 
             var props = _channel.CreateBasicProperties();
             props.ContentType = "application/json";
-            props.DeliveryMode = 2; 
+            props.DeliveryMode = 2; // persistent
 
             _channel.BasicPublish(
                 exchange: "orders-exchange",

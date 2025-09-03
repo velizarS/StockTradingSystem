@@ -1,4 +1,7 @@
-﻿using PortfolioService.Models;
+﻿using PortfolioService.Messaging;
+using PortfolioService.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PortfolioService.Services
 {
@@ -9,5 +12,6 @@ namespace PortfolioService.Services
         Task AddAsync(Portfolio portfolio);
         Task UpdateAsync(Portfolio portfolio);
         Task DeleteAsync(int id);
+        Task ProcessNewOrderAsync(OrderCreatedEvent orderEvent);
     }
 }

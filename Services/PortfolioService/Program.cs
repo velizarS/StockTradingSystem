@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PortfolioService.Data;
 using PortfolioService.Repositories;
 using PortfolioService.Services;
+using PortfolioService.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +12,9 @@ builder.Services.AddDbContext<PortfolioDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPortfolioService, PortfolioService.Services.PortfolioService>();
 
-builder.Services.AddControllers();
+builder.Services.AddHostedService<RabbitMqConsumer>();
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

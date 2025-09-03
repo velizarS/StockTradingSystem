@@ -1,5 +1,8 @@
 ﻿using PortfolioService.Models;
 using PortfolioService.Repositories;
+using PortfolioService.Messaging;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace PortfolioService.Services
 {
@@ -48,6 +51,30 @@ namespace PortfolioService.Services
                 throw new KeyNotFoundException($"Portfolio with id {id} not found");
 
             await _portfolioRepository.RemoveAsync(portfolio);
+            await _portfolioRepository.SaveChangesAsync();
+        }
+
+        public async Task ProcessNewOrderAsync(OrderCreatedEvent orderEvent)
+        {
+            var portfolio = await _portfolioRepository.GetByIdAsync(orderEvent.OrderId);
+            if (portfolio == null)
+            {
+                portfolio = new Portfolio
+                {
+                    Symbol = orderEvent.Symbol,
+                    Quantity = orderEvent.Quantity,
+                    AveragePrice = orderEvent.Price
+                };
+                await _portfolioRepository.AddAsync(portfolio);
+            }
+            else
+            {
+                // Актуализиране на количеството и средната цена
+                var totalQuantity = portfolio.Quantity + orderEvent.Quantity;
+                portfolio.AveragePrice = ((portfolio.AveragePrice * portfolio.Quantity) + (orderEvent.Price * orderEvent.Quantity)) / totalQuantity;
+                portfolio.Quantity = totalQuantity;
+            }
+
             await _portfolioRepository.SaveChangesAsync();
         }
     }
