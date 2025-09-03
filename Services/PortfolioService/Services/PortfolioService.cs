@@ -1,43 +1,54 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PortfolioService.Data;
-using PortfolioService.Models;
+﻿using PortfolioService.Models;
+using PortfolioService.Repositories;
 
 namespace PortfolioService.Services
 {
     public class PortfolioService : IPortfolioService
     {
-        private readonly PortfolioDbContext _context;
+        private readonly IRepository<Portfolio> _portfolioRepository;
 
-        public PortfolioService(PortfolioDbContext context)
+        public PortfolioService(IRepository<Portfolio> portfolioRepository)
         {
-            _context = context;
+            _portfolioRepository = portfolioRepository;
         }
 
-        public async Task<List<Portfolio>> GetAllAsync() => await _context.Portfolios.ToListAsync();
+        public async Task<IEnumerable<Portfolio>> GetAllAsync()
+        {
+            return await _portfolioRepository.GetAllAsync();
+        }
 
-        public async Task<Portfolio?> GetByIdAsync(int id) =>
-            await _context.Portfolios.FirstOrDefaultAsync(p => p.Id == id);
+        public async Task<Portfolio?> GetByIdAsync(int id)
+        {
+            return await _portfolioRepository.GetByIdAsync(id);
+        }
 
         public async Task AddAsync(Portfolio portfolio)
         {
-            _context.Portfolios.Add(portfolio);
-            await _context.SaveChangesAsync();
+            await _portfolioRepository.AddAsync(portfolio);
+            await _portfolioRepository.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Portfolio portfolio)
         {
-            _context.Portfolios.Update(portfolio);
-            await _context.SaveChangesAsync();
+            var existing = await _portfolioRepository.GetByIdAsync(portfolio.Id);
+            if (existing == null)
+                throw new KeyNotFoundException($"Portfolio with id {portfolio.Id} not found");
+
+            existing.Symbol = portfolio.Symbol;
+            existing.AveragePrice = portfolio.AveragePrice;
+            existing.Quantity = portfolio.Quantity;
+
+            await _portfolioRepository.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var portfolio = await _context.Portfolios.FindAsync(id);
-            if (portfolio != null)
-            {
-                _context.Portfolios.Remove(portfolio);
-                await _context.SaveChangesAsync();
-            }
+            var portfolio = await _portfolioRepository.GetByIdAsync(id);
+            if (portfolio == null)
+                throw new KeyNotFoundException($"Portfolio with id {id} not found");
+
+            await _portfolioRepository.RemoveAsync(portfolio);
+            await _portfolioRepository.SaveChangesAsync();
         }
     }
 }
