@@ -56,26 +56,29 @@ namespace PortfolioService.Services
 
         public async Task ProcessNewOrderAsync(OrderCreatedEvent orderEvent)
         {
-            var portfolio = await _portfolioRepository.GetByIdAsync(orderEvent.OrderId);
-            if (portfolio == null)
+            var existing = (await _portfolioRepository.GetAllAsync())
+                .FirstOrDefault(p => p.Symbol == orderEvent.Symbol);
+
+            if (existing == null)
             {
-                portfolio = new Portfolio
+                var newPortfolio = new Portfolio
                 {
                     Symbol = orderEvent.Symbol,
                     Quantity = orderEvent.Quantity,
                     AveragePrice = orderEvent.Price
                 };
-                await _portfolioRepository.AddAsync(portfolio);
+                await _portfolioRepository.AddAsync(newPortfolio);
             }
             else
             {
-                // Актуализиране на количеството и средната цена
-                var totalQuantity = portfolio.Quantity + orderEvent.Quantity;
-                portfolio.AveragePrice = ((portfolio.AveragePrice * portfolio.Quantity) + (orderEvent.Price * orderEvent.Quantity)) / totalQuantity;
-                portfolio.Quantity = totalQuantity;
+                var totalQuantity = existing.Quantity + orderEvent.Quantity;
+                existing.AveragePrice = ((existing.AveragePrice * existing.Quantity) +
+                                        (orderEvent.Price * orderEvent.Quantity)) / totalQuantity;
+                existing.Quantity = totalQuantity;
             }
 
             await _portfolioRepository.SaveChangesAsync();
         }
+
     }
 }

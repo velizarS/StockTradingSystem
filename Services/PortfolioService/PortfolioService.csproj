@@ -23,4 +23,8 @@
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\StockTradingSystem.Shared\StockTradingSystem.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

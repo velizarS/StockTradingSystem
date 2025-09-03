@@ -13,6 +13,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPortfolioService, PortfolioService.Services.PortfolioService>();
 
 builder.Services.AddHostedService<RabbitMqConsumer>();
+builder.Services.AddHostedService<PriceUpdatedConsumer>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -9,6 +9,7 @@ namespace PortfolioService.Data
             : base(options) { }
 
         public DbSet<Portfolio> Portfolios { get; set; } = null!;
+        public DbSet<Position> Positions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
